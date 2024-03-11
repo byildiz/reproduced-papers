@@ -7,7 +7,7 @@ import { useAuthentication, useFirebase, useSearch } from '../hooks'
 import { getReprodUrl } from '../helpers'
 import Spinner from './Spinner'
 
-import logo from './logo.png'
+import logo from '../assets/logo.png'
 
 function Header() {
   const firebase = useFirebase()
