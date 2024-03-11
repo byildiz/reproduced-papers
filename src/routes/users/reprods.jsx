@@ -19,7 +19,7 @@ import withAuthentication from '../../components/withAuthentication'
 const params = { limit: LIMIT }
 
 function Reprods({ authUser }) {
-  const { user, isOwner } = useRouteLoaderData('user')
+  const { user } = useRouteLoaderData('user')
   const { reprodId } = useParams()
   const firebase = useFirebase()
 
@@ -56,6 +56,7 @@ function Reprods({ authUser }) {
     }
   }
 
+  const isOwner = authUser && user.id === authUser.uid
   const userRole = authUser.profile.role
   const isAdmin = userRole === 'admin'
   return (

@@ -9,15 +9,11 @@ export default function useAuthentication() {
 
   useEffect(() => {
     const unsubscribe = firebase.onAuthStateChanged((authUser) => {
-      setLoading(true)
-      if (authUser) {
-        authUser.reload()
-        authUser.getIdToken(true)
-      }
       setAuthUser(authUser)
       setLoading(false)
     })
     return () => {
+      setLoading(true)
       unsubscribe()
     }
   }, [firebase])

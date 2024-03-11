@@ -133,7 +133,7 @@ function App() {
     return <Spinner />
   }
 
-  return <RouterProvider router={router} />
+  return <RouterProvider router={router} fallbackElement={<Spinner />} />
 }
 
 export default App

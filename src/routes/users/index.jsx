@@ -1,9 +1,8 @@
-import { NavLink, Outlet, useLoaderData, useNavigation } from 'react-router-dom'
+import { NavLink, Outlet, useLoaderData } from 'react-router-dom'
 import { get } from 'lodash/fp'
 
 import withAuthentication from '../../components/withAuthentication'
 import ErrorAlert from '../../components/ErrorAlert'
-import Spinner from '../../components/Spinner'
 import { firebase } from '../../firebase'
 
 export async function loader({ params }) {
@@ -12,19 +11,13 @@ export async function loader({ params }) {
   if (!user || !user.exists) {
     throw Error(`User with id ${userId} could not found.`)
   }
-  const authUser = firebase.authUser
-  const isOwner = authUser && userId === authUser.uid
-  return { userId, user, isOwner }
+  return { user }
 }
 
 function User({ authUser }) {
-  const { userId, user, isOwner } = useLoaderData()
-  const navigation = useNavigation()
+  const { user } = useLoaderData()
 
-  if (navigation.state === 'loading') {
-    return <Spinner />
-  }
-
+  const userId = user.id
   const role = get('profile.role')(authUser)
   if (userId !== authUser.uid && role !== 'admin') {
     return (
@@ -34,6 +27,7 @@ function User({ authUser }) {
     )
   }
 
+  const isOwner = authUser && userId === authUser.uid
   const myPrefix = isOwner ? 'My' : ''
   return (
     <>
