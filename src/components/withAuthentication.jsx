@@ -1,5 +1,5 @@
-import { Spinner } from 'react-bootstrap'
 import { useAuthentication } from '../hooks'
+import Spinner from './Spinner'
 import ErrorAlert from './ErrorAlert'
 
 export default function withAuthentication(Component) {
