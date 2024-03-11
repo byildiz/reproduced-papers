@@ -31,7 +31,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        errorElement: <ErrorPage reprods />,
+        errorElement: <ErrorPage />,
         children: [
           {
             index: true,
