@@ -1,3 +1,3 @@
 export function getReprodUrl(paperId, reprodId) {
-  return `/papers/${paperId}#r${reprodId}`;
+  return `/papers/${paperId}#r${reprodId}`
 }

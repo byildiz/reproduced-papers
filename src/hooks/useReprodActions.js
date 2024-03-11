@@ -1,21 +1,20 @@
-import { useToasts } from 'react-toast-notifications';
+import toast from "react-hot-toast";
 
-import { useFirebase, useAlgolia } from './';
+import { useFirebase, useAlgolia } from ".";
 
 export default function useReprodActions() {
   const firebase = useFirebase();
   const algolia = useAlgolia();
-  const { addToast } = useToasts();
 
   async function doStatusUpdate(id, paperId, status) {
     try {
       const data = { status };
       const doc = await firebase.updateReprod(paperId, id, data);
       await algolia.updateReprod(id, data);
-      addToast(`The reproduction was ${status}`, { appearance: 'success' });
+      toast.success(`The reproduction was ${status}`);
       return await doc.get();
     } catch (error) {
-      addToast(error.message, { appearance: 'error' });
+      toast.error(error.message);
       throw error;
     }
   }
@@ -24,9 +23,9 @@ export default function useReprodActions() {
     try {
       await firebase.deleteReprod(paperId, id);
       await algolia.deleteReprod(id);
-      addToast('The reproduction was deleted', { appearance: 'success' });
+      toast.success("The reproduction was deleted");
     } catch (error) {
-      addToast(error.message, { appearance: 'error' });
+      toast.error(error.message);
       throw error;
     }
   }

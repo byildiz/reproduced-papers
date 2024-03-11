@@ -1,6 +1,6 @@
-import { useContext } from 'react';
-import { FirebaseContext } from '../firebase';
+import { useContext } from 'react'
+import { FirebaseContext } from '../firebase'
 
 export default function useFirebase() {
-  return useContext(FirebaseContext);
+  return useContext(FirebaseContext)
 }

@@ -1,75 +1,73 @@
-import { useEffect, useReducer, useRef } from 'react';
-import { useToasts } from 'react-toast-notifications';
+import { useEffect, useReducer, useRef } from 'react'
+import toast from 'react-hot-toast'
 
-import { useAlgolia, useFirebase } from '.';
+import { useAlgolia, useAuthentication } from '.'
 
 const INITIAL_STATE = {
   query: '',
   hits: [],
   loading: false,
   error: null,
-};
+}
 
 function reducer(state, action) {
   switch (action.type) {
     case 'SEARCH':
-      return { ...state, query: action.query, loading: true };
+      return { ...state, query: action.query, loading: true }
     case 'SUCCESS':
-      return { ...state, hits: action.hits, loading: false, error: null };
+      return { ...state, hits: action.hits, loading: false, error: null }
     case 'ERROR':
-      return { ...state, loading: false, error: action.error };
+      return { ...state, loading: false, error: action.error }
     case 'EMPTY':
-      return { ...state, hits: [], loading: false };
+      return { ...state, hits: [], loading: false }
     default:
-      throw new Error(`Unknown action type: ${action.type}`);
+      throw new Error(`Unknown action type: ${action.type}`)
   }
 }
 
 export default function useSearch(index) {
-  const firebase = useFirebase();
-  const authUser = firebase.authUser;
-  const algolia = useAlgolia();
-  const { addToast } = useToasts();
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-  const timeoutId = useRef(null);
+  const { authUser } = useAuthentication()
+  const algolia = useAlgolia()
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
+  const timeoutId = useRef(null)
 
   useEffect(() => {
     return () => {
-      clearTimeout(timeoutId.current);
-    };
-  }, []);
+      clearTimeout(timeoutId.current)
+    }
+  }, [])
 
   function search(query) {
-    clearTimeout(timeoutId.current);
-    dispatch({ type: 'SEARCH', query });
-    return new Promise((resolve, reject) => {
+    clearTimeout(timeoutId.current)
+    dispatch({ type: 'SEARCH', query })
+    return new Promise((resolve) => {
       if (query.length > 2) {
         timeoutId.current = setTimeout(() => {
-          const params = {};
+          const params = {}
           if (!authUser || authUser.profile.role !== 'admin') {
-            params.filters = '(status:pending OR status:published)';
+            params.filters = '(status:pending OR status:published)'
             if (index === 'reprods') {
-              params.filters += ' AND visibility:public';
+              params.filters += ' AND visibility:public'
             }
           }
           algolia
             .search(index, query, params)
-            .then(result => {
-              dispatch({ type: 'SUCCESS', hits: result.hits });
-              resolve(true);
+            .then((result) => {
+              dispatch({ type: 'SUCCESS', hits: result.hits })
+              resolve(true)
             })
-            .catch(error => {
-              dispatch({ type: 'ERROR', error });
-              addToast(error.message, { appearance: 'error' });
-              resolve(false);
-            });
-        }, 200);
+            .catch((error) => {
+              dispatch({ type: 'ERROR', error })
+              toast.error(error.message)
+              resolve(false)
+            })
+        }, 200)
       } else {
-        dispatch({ type: 'EMPTY' });
-        resolve(true);
+        dispatch({ type: 'EMPTY' })
+        resolve(true)
       }
-    });
+    })
   }
 
-  return { ...state, search };
+  return { ...state, search }
 }

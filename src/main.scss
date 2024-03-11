@@ -1,0 +1,105 @@
+$enable-dark-mode: false;
+
+$gray-300: #dee2e6;
+$gray-900: #212529;
+$light: $gray-300;
+$dark: $gray-900;
+
+$theme-colors: (
+  'primary': #00a6d6,
+  'secondary': #9b9b9b,
+  'success': #a5ca1a,
+  'danger': #e21a1a,
+  'warning': #ffc400,
+  'info': #008891,
+  'light': $light,
+  'dark': $dark,
+);
+
+@import 'bootstrap/scss/bootstrap';
+
+body {
+  padding-top: 5rem;
+}
+
+.my-toast-container {
+  position: fixed;
+  top: 4rem !important;
+  z-index: $zindex-popover !important;
+}
+
+.my-toast {
+  width: auto !important;
+  max-width: 400px;
+  background-color: $gray-100 !important;
+}
+
+.my-toast-success {
+  color: map-get($theme-colors, 'success') !important;
+}
+
+.my-toast-success > div:first-child {
+  color: $gray-100 !important;
+  background-color: map-get($theme-colors, 'success') !important;
+}
+
+.my-toast-error {
+  color: map-get($theme-colors, 'danger') !important;
+}
+
+.my-toast-error > div:first-child {
+  color: $gray-100 !important;
+  background-color: map-get($theme-colors, 'danger') !important;
+}
+
+.my-toast-warning {
+  color: map-get($theme-colors, 'warning') !important;
+}
+
+.my-toast-warning > div:first-child {
+  color: $gray-100 !important;
+  background-color: map-get($theme-colors, 'warning') !important;
+}
+
+.my-toast-info {
+  color: map-get($theme-colors, 'info') !important;
+}
+
+.my-toast-info > div:first-child {
+  color: $gray-100 !important;
+  background-color: map-get($theme-colors, 'info') !important;
+}
+
+.search {
+  width: 100%;
+}
+@media (min-width: 576px) {
+  .search {
+    width: 300px;
+  }
+  .search-input {
+    -webkit-transition: width 0.2s ease-in-out;
+    -moz-transition: width 0.2s ease-in-out;
+    -o-transition: width 0.2s ease-in-out;
+    transition: width 0.2s ease-in-out;
+  }
+  .search-input:focus {
+    width: 543px !important;
+  }
+  .search-results {
+    width: 543px !important;
+    -webkit-transition: visibility 0.2s linear;
+    -moz-transition: visibility 0.2s linear;
+    -o-transition: visibility 0.2s linear;
+    transition: visibility 0.2s linear;
+  }
+}
+
+.img-placeholder {
+  font-size: 1.125rem;
+  text-anchor: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

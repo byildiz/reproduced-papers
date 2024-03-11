@@ -1,6 +1,6 @@
-import FirebaseAPI from './FirebaseAPI';
-import FirebaseContext from './FirebaseContext';
+import FirebaseAPI from './FirebaseAPI'
+import FirebaseContext from './FirebaseContext'
 
-export default FirebaseAPI;
+export { FirebaseContext }
 
-export { FirebaseContext };
+export const firebase = new FirebaseAPI()

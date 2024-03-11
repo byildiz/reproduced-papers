@@ -4,23 +4,23 @@ import {
   apps,
   assertSucceeds,
   assertFails,
-} from '@firebase/testing';
-import { readFileSync } from 'fs';
+} from '@firebase/testing'
+import { readFileSync } from 'fs'
 
 const setup = async (auth, data) => {
-  const projectId = `firestore-${Date.now()}`;
+  const projectId = `firestore-${Date.now()}`
   const app = initializeTestApp({
     projectId,
     auth,
-  });
+  })
 
-  const db = app.firestore();
+  const db = app.firestore()
 
   // Write mock documents before rules
   if (data) {
     for (const key in data) {
-      const ref = db.doc(key);
-      await ref.set(data[key]);
+      const ref = db.doc(key)
+      await ref.set(data[key])
     }
   }
 
@@ -28,64 +28,64 @@ const setup = async (auth, data) => {
   await loadFirestoreRules({
     projectId,
     rules: readFileSync('firestore.rules', 'utf8'),
-  });
+  })
 
-  return db;
-};
+  return db
+}
 
 const teardown = async () => {
-  Promise.all(apps().map(app => app.delete()));
-};
+  Promise.all(apps().map((app) => app.delete()))
+}
 
 expect.extend({
   async toAllow(x) {
-    let pass = false;
+    let pass = false
     try {
-      await assertSucceeds(x);
-      pass = true;
+      await assertSucceeds(x)
+      pass = true
     } catch (err) {}
 
     return {
       pass,
       message: () =>
         'Expected Firebase operation to be allowed, but it was denied',
-    };
+    }
   },
-});
+})
 
 expect.extend({
   async toDeny(x) {
-    let pass = false;
+    let pass = false
     try {
-      await assertFails(x);
-      pass = true;
+      await assertFails(x)
+      pass = true
     } catch (err) {}
     return {
       pass,
       message: () =>
         'Expected Firebase operation to be denied, but it was allowed',
-    };
+    }
   },
-});
+})
 
 describe('Database rules', () => {
-  let db;
-  let ref;
+  let db
+  let ref
 
   beforeAll(async () => {
-    db = await setup();
-    ref = db.collection('some-nonexistent-collection');
-  });
+    db = await setup()
+    ref = db.collection('some-nonexistent-collection')
+  })
 
   afterAll(async () => {
-    await teardown();
-  });
+    await teardown()
+  })
 
   test('fail when reading/writing an unauthorized collection', async () => {
-    await expect(ref.add({})).toDeny();
-    await expect(ref.get()).toDeny();
-  });
-});
+    await expect(ref.add({})).toDeny()
+    await expect(ref.get()).toDeny()
+  })
+})
 
 const mockData = {
   'users/user1': {
@@ -144,29 +144,29 @@ const mockData = {
     createdBy: 'user1',
     createdAt: Date.now(),
   },
-};
+}
 
 describe('Reprods rules', () => {
-  let db;
+  let db
 
   afterAll(async () => {
-    await teardown();
-  });
+    await teardown()
+  })
 
   test('get published with unauthorized user', async () => {
-    db = await setup(null, mockData);
-    await expect(db.doc('papers/published/reprods/published').get()).toAllow();
-  });
+    db = await setup(null, mockData)
+    await expect(db.doc('papers/published/reprods/published').get()).toAllow()
+  })
 
   test('get unpublished with unauthorized user', async () => {
-    db = await setup(null, mockData);
+    db = await setup(null, mockData)
     await expect(
-      db.doc('papers/unpublished/reprods/unpublished').get()
-    ).toDeny();
-  });
+      db.doc('papers/unpublished/reprods/unpublished').get(),
+    ).toDeny()
+  })
 
   test('isCreatedBySelf with unauthorized user', async () => {
-    db = await setup(null, mockData);
+    db = await setup(null, mockData)
     await expect(
       db.doc('papers/unpublished/reprods/reprod1').set({
         title: 'reprod1',
@@ -177,12 +177,12 @@ describe('Reprods rules', () => {
         status: 'pending',
         createdBy: 'user1',
         createdAt: Date.now(),
-      })
-    ).toAllow();
-  });
+      }),
+    ).toAllow()
+  })
 
   test('isCreatedBySelf with authorized user', async () => {
-    db = await setup({ uid: 'user1' }, mockData);
+    db = await setup({ uid: 'user1' }, mockData)
     await expect(
       db.doc('papers/unpublished/reprods/reprod1').set({
         title: 'reprod1',
@@ -193,8 +193,8 @@ describe('Reprods rules', () => {
         status: 'pending',
         createdBy: 'user1',
         createdAt: Date.now(),
-      })
-    ).toAllow();
+      }),
+    ).toAllow()
     await expect(
       db.doc('papers/unpublished/reprods/reprod1').set({
         title: 'reprod1',
@@ -205,12 +205,12 @@ describe('Reprods rules', () => {
         status: 'pending',
         createdBy: 'user2',
         createdAt: Date.now(),
-      })
-    ).toDeny();
-  });
+      }),
+    ).toDeny()
+  })
 
   test('reprodCreateCheck with authorized user', async () => {
-    db = await setup({ uid: 'user1' }, mockData);
+    db = await setup({ uid: 'user1' }, mockData)
     await expect(
       db.doc('papers/unpublished/reprods/reprod1').set({
         title: 'reprod1',
@@ -221,8 +221,8 @@ describe('Reprods rules', () => {
         status: 'published',
         createdBy: 'user1',
         createdAt: Date.now(),
-      })
-    ).toDeny();
+      }),
+    ).toDeny()
     await expect(
       db.doc('papers/unpublished/reprods/reprod1').set({
         title: 'reprod1',
@@ -233,8 +233,8 @@ describe('Reprods rules', () => {
         status: 'pending',
         // createdBy: 'user1',
         createdBy: 'user1',
-      })
-    ).toDeny();
+      }),
+    ).toDeny()
     await expect(
       db.doc('papers/unpublished/reprods/reprod1').set({
         title: 'reprod1',
@@ -245,12 +245,12 @@ describe('Reprods rules', () => {
         status: 'pending',
         createdBy: 'user1',
         createdAt: Date.now(),
-      })
-    ).toAllow();
-  });
+      }),
+    ).toAllow()
+  })
 
   test('isUpdatedBySelf with unauthorized user', async () => {
-    db = await setup(null, mockData);
+    db = await setup(null, mockData)
     await expect(
       db.doc('papers/published/reprods/published').update({
         title: 'reprod1',
@@ -260,12 +260,12 @@ describe('Reprods rules', () => {
         status: 'pending',
         createdBy: 'user1',
         createdAt: Date.now(),
-      })
-    ).toDeny();
-  });
+      }),
+    ).toDeny()
+  })
 
   test('isUpdatedBySelf with authorized user', async () => {
-    db = await setup({ uid: 'user1' }, mockData);
+    db = await setup({ uid: 'user1' }, mockData)
     await expect(
       db.doc('papers/published/reprods/published').update({
         title: 'reprod1',
@@ -274,8 +274,8 @@ describe('Reprods rules', () => {
         urlCode: 'a/b',
         status: 'pending',
         updatedBy: 'user1',
-      })
-    ).toAllow();
+      }),
+    ).toAllow()
     await expect(
       db.doc('papers/published/reprods/published').update({
         title: 'reprod1',
@@ -284,8 +284,8 @@ describe('Reprods rules', () => {
         urlCode: 'a/b',
         status: 'pending',
         updatedBy: 'user2',
-      })
-    ).toDeny();
+      }),
+    ).toDeny()
     await expect(
       db.doc('papers/unpublished/reprods/unpublished2').update({
         title: 'reprod1',
@@ -294,12 +294,12 @@ describe('Reprods rules', () => {
         urlCode: 'a/b',
         status: 'pending',
         updatedBy: 'user1',
-      })
-    ).toDeny();
-  });
+      }),
+    ).toDeny()
+  })
 
   test('reprodUpdateCheck with authorized user', async () => {
-    db = await setup({ uid: 'user1' }, mockData);
+    db = await setup({ uid: 'user1' }, mockData)
     await expect(
       db.doc('papers/unpublished/reprods/unpublished').update({
         title: 'reprod1',
@@ -308,8 +308,8 @@ describe('Reprods rules', () => {
         urlCode: 'a/b',
         status: 'pending',
         createdBy: 'user1',
-      })
-    ).toDeny();
+      }),
+    ).toDeny()
     await expect(
       db.doc('papers/unpublished/reprods/unpublished').update({
         // title: 'test',
@@ -323,15 +323,17 @@ describe('Reprods rules', () => {
         updatedBy: 'user1',
         // // test: 'dsa',
         // updatedAt: Date.now(),
-      })
-    ).toAllow();
-  });
+      }),
+    ).toAllow()
+  })
 
   test('admin do whatever s/he wants', async () => {
-    db = await setup({ uid: 'admin' }, mockData);
+    db = await setup({ uid: 'admin' }, mockData)
     await expect(
-      db.doc('papers/unpublished/reprods/reprod2').set({ unknownField: 'test' })
-    ).toAllow();
-    await expect(db.collectionGroup('reprods').get()).toAllow();
-  });
-});
+      db
+        .doc('papers/unpublished/reprods/reprod2')
+        .set({ unknownField: 'test' }),
+    ).toAllow()
+    await expect(db.collectionGroup('reprods').get()).toAllow()
+  })
+})

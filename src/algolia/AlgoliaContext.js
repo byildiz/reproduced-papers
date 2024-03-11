@@ -1,5 +1,5 @@
-import React from 'react';
+import React from 'react'
 
-const AlgoliaContext = React.createContext(null);
+const AlgoliaContext = React.createContext(null)
 
-export default AlgoliaContext;
+export default AlgoliaContext

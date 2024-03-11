@@ -1,10 +1,10 @@
-export const LIMIT = 10;
+export const LIMIT = 10
 
 export const STATUSES = {
   pending: { label: 'Pending', color: 'secondary' },
   rejected: { label: 'Rejected', action: 'Reject', color: 'warning' },
   published: { label: 'Published', action: 'Publish', color: 'success' },
-};
+}
 
 export const BADGES = {
   reproduced: {
@@ -43,4 +43,4 @@ export const BADGES = {
     description: 'Additional ablation studies.',
     color: 'dark',
   },
-};
+}
