@@ -3,8 +3,7 @@ import { useLoaderData } from 'react-router-dom'
 import { firebase } from '../firebase'
 
 export async function loader() {
-  const paperCount = await firebase.getPaperCount()
-  const reprodCount = await firebase.getReprodCount()
+  const { paperCount, reprodCount } = await firebase.getStatistics()
   return { paperCount, reprodCount }
 }
 

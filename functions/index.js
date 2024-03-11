@@ -7,8 +7,8 @@ initializeApp()
 
 const db = getFirestore()
 
-exports.getPaperCount = onCall((request) => {
-  return db
+exports.getStatistics = onCall(async (request) => {
+  const paperCount = db
     .collection('papers')
     .count()
     .get()
@@ -19,10 +19,8 @@ exports.getPaperCount = onCall((request) => {
       logger.info(error, { structuredData: true })
       throw new HttpsError('unknown', error.message, error)
     })
-})
 
-exports.getReprodCount = onCall((request) => {
-  return db
+  const reprodCount = db
     .collectionGroup('reprods')
     .count()
     .get()
@@ -33,4 +31,7 @@ exports.getReprodCount = onCall((request) => {
       logger.info(error, { structuredData: true })
       throw new HttpsError('unknown', error.message, error)
     })
+
+  const data = await Promise.all([paperCount, reprodCount])
+  return { paperCount: data[0], reprodCount: data[1] }
 })

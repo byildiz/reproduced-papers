@@ -144,12 +144,6 @@ export default class FirebaseAPI {
     return this.query(q, params)
   }
 
-  getPaperCount = async () => {
-    const func = this.functions.httpsCallable('getPaperCount')
-    const result = await func({})
-    return result.data
-  }
-
   getUserPapers = async (uid, params = {}) => {
     const where = ['createdBy', '==', uid]
     if (!params.where) {
@@ -239,12 +233,6 @@ export default class FirebaseAPI {
     return this.query(q, params)
   }
 
-  getReprodCount = async () => {
-    const func = this.functions.httpsCallable('getReprodCount')
-    const result = await func({})
-    return result.data
-  }
-
   getUserReprods = async (uid, params = {}) => {
     const where = ['createdBy', '==', uid]
     if (!params.where) {
@@ -281,5 +269,11 @@ export default class FirebaseAPI {
         )
     }
     return reprod.ref.delete()
+  }
+
+  getStatistics = async () => {
+    const func = this.functions.httpsCallable('getStatistics')
+    const result = await func({})
+    return result.data
   }
 }
