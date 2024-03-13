@@ -1,14 +1,14 @@
 # Reproduced Papers
 
-[https://reproducedpapers.org](https://reproducedpapers.org) is an online hub for deep learning papers and their reproductions. It aims to provide a platform for both sharing and accessing reproductions, including their code and reproduction procedures (e.g., a blog post), all in one place.
+[Reproduced Papers](https://reproducedpapers.org) is an online hub for deep learning papers and their reproductions. It aims to provide a platform for both sharing and accessing reproductions, including their code and reproduction procedures (e.g., a blog post, a notebook), all in one place.
 
-Originally developed as part of an NWO grant for the CS4240 Deep Learning course at TU Delft ([https://www.tudelft.nl/](https://www.tudelft.nl/)), the platform facilitates.
+Originally developed as part of an NWO grant for the CS4240 Deep Learning course at [TU Delft](https://www.tudelft.nl/), the platform facilitates.
 
 ## Installation
 
-This application is built with Vite ([https://vitejs.dev/](https://vitejs.dev/)) and React ([https://reactjs.org/](https://reactjs.org/)) and leverages Firebase ([https://firebase.google.com/](https://firebase.google.com/)) for the backend and Algolia ([https://www.algolia.com/](https://www.algolia.com/)) for the search index. To run the application locally, follow these steps:
+This application is built with [Vite](https://vitejs.dev/) and [React](https://reactjs.org/) and leverages [Firebase](https://firebase.google.com/) for the backend and [Algolia](https://www.algolia.com/) for the search index. To run the application locally, follow these steps:
 
-1. Install Bun ([https://bun.sh/](https://bun.sh/)) and the Firebase CLI ([https://firebase.google.com/docs/cli/](https://firebase.google.com/docs/cli/)).
+1. Install [Bun](https://bun.sh/) and the [Firebase CLI](https://firebase.google.com/docs/cli/).
 2. Clone this Git repository to your machine by running:
 
 ```bash
