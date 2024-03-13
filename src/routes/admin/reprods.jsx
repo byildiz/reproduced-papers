@@ -5,15 +5,14 @@ import {
   useFirebase,
   useRequest,
   useCollection,
-  usePaperActions,
+  useReprodActions,
 } from '../../hooks'
-import Button from '../Button'
-import DeleteDialog from '../DeleteDialog'
-import Dialog from '../Dialog'
-import { LIMIT } from '../../constants'
-import StatusDropdown from '../StatusDropdown'
-import PaperDetail from './PaperDetail'
-import PaperPicker from '../PaperPicker'
+import Button from '../../components/Button'
+import DeleteDialog from '../../components/DeleteDialog'
+import Dialog from '../../components/Dialog'
+import { LIMIT, BADGES } from '../../constants'
+import StatusDropdown from '../../components/StatusDropdown'
+import { getReprodUrl } from '../../helpers'
 
 const filters = {
   all: 'All',
@@ -30,7 +29,7 @@ function getFilteredIds(filter, state) {
     (id) =>
       (filter === 'pending' && state.byId[id].status === 'pending') ||
       (filter === 'rejected' && state.byId[id].status === 'rejected') ||
-      (filter === 'published' && state.byId[id].status === 'published'),
+      (filter === 'published' && state.byId[id].status === 'published')
   )
 }
 
@@ -38,19 +37,19 @@ function getFilteredIds(filter, state) {
 // otherwise useMemo
 const params = { limit: LIMIT }
 
-function Papers() {
+function AdminReprods() {
   const firebase = useFirebase()
   const { data, loading, hasMore, fetchMore } = useRequest(
-    firebase.getPapers,
-    params,
+    firebase.getReprods,
+    params
   )
   const [state, dispatch] = useCollection(data)
   const { byId } = state
 
-  const { doStatusUpdate, doDelete, doMerge } = usePaperActions()
+  const { doStatusUpdate, doDelete } = useReprodActions()
   async function handleStatusChange(id, status) {
     try {
-      const doc = await doStatusUpdate(id, status)
+      const doc = await doStatusUpdate(id, byId[id].paperId, status)
       dispatch({ type: 'SET', id, doc })
     } catch (error) {
       console.error(error)
@@ -60,20 +59,9 @@ function Papers() {
   const [forDelete, setForDelete] = useState(null)
   async function handleDelete(id) {
     try {
-      await doDelete(id)
+      await doDelete(id, byId[id].paperId)
       setForDelete(null)
       dispatch({ type: 'DELETE', id })
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const [forMerge, setForMerge] = useState(null)
-  async function handleMerge(paperId1, paperId2) {
-    try {
-      await doMerge(paperId1, paperId2)
-      setForMerge(null)
-      dispatch({ type: 'DELETE', paperId2 })
     } catch (error) {
       console.error(error)
     }
@@ -104,9 +92,10 @@ function Papers() {
         <table className="table table-hover">
           <thead>
             <tr>
-              <th>Paper ID</th>
+              <th>Reproduction ID</th>
               <th>Title</th>
               <th>Author(s)</th>
+              <th>Badges</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -114,10 +103,21 @@ function Papers() {
             {filteredIds.map((id) => (
               <tr key={id}>
                 <td>
-                  <Link to={`/papers/${id}`}>{id}</Link>
+                  <Link to={getReprodUrl(byId[id].paperId, id)}>{id}</Link>
                 </td>
                 <td>{byId[id].title}</td>
                 <td>{byId[id].authors.join(', ')}</td>
+                <td>
+                  {byId[id].badges &&
+                    byId[id].badges.map((key) => (
+                      <span
+                        key={key}
+                        className={`badge text-bg-${BADGES[key].color} me-2`}
+                      >
+                        {BADGES[key].label}
+                      </span>
+                    ))}
+                </td>
                 <td>
                   <div className="btn-group btn-group-sm" role="group">
                     <Button
@@ -128,7 +128,7 @@ function Papers() {
                     </Button>
                     <Link
                       className="btn btn-success"
-                      to={`/admin/papers/${id}/edit`}
+                      to={`/admin/reproductions/${byId[id].paperId}/${id}/edit`}
                     >
                       Edit
                     </Link>
@@ -137,12 +137,6 @@ function Papers() {
                       onClick={() => setForDelete(id)}
                     >
                       Delete
-                    </Button>
-                    <Button
-                      className="btn btn-info"
-                      onClick={() => setForMerge(id)}
-                    >
-                      Merge
                     </Button>
                     <StatusDropdown
                       status={byId[id].status}
@@ -177,19 +171,69 @@ function Papers() {
           size="xl"
         >
           {forDetail && (
-            <PaperDetail paperId={forDetail} paper={byId[forDetail]} />
+            <dl>
+              <dt>Reprod ID</dt>
+              <dd>
+                <Link to={getReprodUrl(byId[forDetail].paperId, forDetail)}>
+                  {forDetail}
+                </Link>
+              </dd>
+              <dt>Description</dt>
+              <dd>{byId[forDetail].description}</dd>
+              <dt>Author(s)</dt>
+              <dd>{byId[forDetail].authors.join(', ')}</dd>
+              {byId[forDetail].urlBlog && (
+                <>
+                  <dt>URL to blog post</dt>
+                  <dd>
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={byId[forDetail].urlBlog}
+                    >
+                      {byId[forDetail].urlBlog}
+                    </a>
+                  </dd>
+                </>
+              )}
+              <dt>URL to code</dt>
+              <dd>
+                {byId[forDetail].urlCode && (
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://github.com/${byId[forDetail].urlCode}`}
+                  >
+                    {byId[forDetail].urlCode}
+                  </a>
+                )}
+              </dd>
+              <dt>Submitted by</dt>
+              <dd>
+                <Link to={`/users/${byId[forDetail].createdBy}`}>
+                  {byId[forDetail].createdBy}
+                </Link>
+              </dd>
+              <dt>Submitted at</dt>
+              <dd>{byId[forDetail].createdAt.toDate().toString()}</dd>
+              {byId[forDetail].updatedBy && (
+                <>
+                  <dt>Updated by</dt>
+                  <dd>
+                    <Link to={`/users/${byId[forDetail].updatedBy}`}>
+                      {byId[forDetail].updatedBy}
+                    </Link>
+                  </dd>
+                  <dt>Updated at</dt>
+                  <dd>{byId[forDetail].updatedAt.toDate().toString()}</dd>
+                </>
+              )}
+            </dl>
           )}
         </Dialog>
-        <PaperPicker
-          title="Choose a paper to merge with"
-          action="Merge"
-          onSelect={(paperId) => handleMerge(paperId, forMerge)}
-          onClose={() => setForMerge(null)}
-          isOpen={!!forMerge}
-        />
       </div>
     </>
   )
 }
 
-export default Papers
+export default AdminReprods

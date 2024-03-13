@@ -11,6 +11,16 @@ import Button from '../../components/Button'
 import DeleteDialog from '../../components/DeleteDialog'
 import PaperList from '../../components/PaperList'
 import { LIMIT } from '../../constants'
+import { firebase } from '../../firebase'
+
+export async function loader({ params }) {
+  const { paperId } = params
+  const paper = await firebase.getPaper(paperId)
+  if (!paper || !paper.exists) {
+    throw Error(`Paper with id ${paperId} could not found.`)
+  }
+  return { paper }
+}
 
 // params should be outside of the component
 // otherwise useMemo

@@ -1,18 +1,13 @@
 import { useState, useEffect, Fragment } from 'react'
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useRouteLoaderData,
-} from 'react-router-dom'
+import { Link, useLoaderData, useLocation, useNavigate } from 'react-router-dom'
 import { get } from 'lodash'
 
-import { useAuthentication, usePaperActions } from '../hooks'
-import PaperReprods from './PaperReprods'
-import DeleteDialog from './DeleteDialog'
-import Button from './Button'
-import StatusDropdown from './StatusDropdown'
-import Badge from './Badge'
+import { useAuthentication, usePaperActions } from '../../hooks'
+import PaperReprods from '../../components/PaperReprods'
+import DeleteDialog from '../../components/DeleteDialog'
+import Button from '../../components/Button'
+import StatusDropdown from '../../components/StatusDropdown'
+import Badge from '../../components/Badge'
 
 function findBests(tables, reprods, paperId) {
   let bests = {}
@@ -63,7 +58,7 @@ function findBests(tables, reprods, paperId) {
 }
 
 function PaperItem() {
-  const { paper } = useRouteLoaderData('paper')
+  const { paper } = useLoaderData()
   const [data, setData] = useState(paper.data())
   const [reprods, setReprods] = useState(null)
   const { authUser } = useAuthentication()

@@ -6,11 +6,26 @@ import {
   useRequest,
   useCollection,
   useReprodActions,
-} from '../hooks'
-import DeleteDialog from './DeleteDialog'
-import ReprodCard from './ReprodCard'
-import Button from './Button'
-import { LIMIT } from '../constants'
+} from '../../hooks'
+import DeleteDialog from '../../components/DeleteDialog'
+import ReprodCard from '../../components/ReprodCard'
+import Button from '../../components/Button'
+import { LIMIT } from '../../constants'
+import { firebase } from '../../firebase'
+import { loader as paperLoader } from '../papers'
+
+export async function loader({ params }) {
+  const { paperId, reprodId } = params
+  const promises = []
+  promises.push(paperLoader({ params }))
+  promises.push(firebase.getPaperReprod(paperId, reprodId))
+  promises.push(firebase.getPaperTables(paperId))
+  const [{ paper }, reprod, tables] = await Promise.all(promises)
+  if (!reprod || !reprod.exists) {
+    throw Error(`Reproduction with id ${reprodId} could not found.`)
+  }
+  return { paper, reprod, tables }
+}
 
 // params should be outside of the component
 // otherwise useMemo

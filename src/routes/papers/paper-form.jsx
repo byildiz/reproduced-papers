@@ -1,10 +1,10 @@
 import { useReducer, useState, useEffect, useRef } from 'react'
-import { useNavigate, Link, useRouteLoaderData } from 'react-router-dom'
+import { useNavigate, Link, useLoaderData } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
-import Button from './Button'
-import Spinner from './Spinner'
-import { useFirebase, useAlgolia, useSearch } from '../hooks'
+import Button from '../../components/Button'
+import Spinner from '../../components/Spinner'
+import { useFirebase, useAlgolia, useSearch } from '../../hooks'
 
 const INITIAL_STATE = {
   title: '',
@@ -40,7 +40,7 @@ function reducer(state, action) {
 }
 
 function PaperForm() {
-  const loaderData = useRouteLoaderData('paper')
+  const loaderData = useLoaderData()
   let paper = null
   if (loaderData && loaderData.paper) {
     paper = loaderData.paper
@@ -259,8 +259,7 @@ function PaperForm() {
         </div>
         <div className="mb-3">
           <label htmlFor="urlCode" className="form-label">
-            Original implementation{' '}
-            <span className="text-muted">(optional)</span>
+            Official code <span className="text-muted">(optional)</span>
           </label>
           <input
             type="url"

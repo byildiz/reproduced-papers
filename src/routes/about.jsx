@@ -3,7 +3,7 @@ import Tooltip from 'react-bootstrap/Tooltip'
 
 import { base64ContactEmail } from '../config'
 import { BADGES } from '../constants'
-import Badge from './Badge'
+import Badge from '../components/Badge'
 
 function About() {
   const email = atob(base64ContactEmail)

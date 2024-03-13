@@ -2,9 +2,9 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 
 import { useFirebase, useAlgolia } from '../../hooks'
-import Button from '../Button'
+import Button from '../../components/Button'
 
-function Actions() {
+function AdminActions() {
   const firebase = useFirebase()
   const algolia = useAlgolia()
 
@@ -69,4 +69,4 @@ function Actions() {
   )
 }
 
-export default Actions
+export default AdminActions

@@ -3,8 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { useSearch } from '../hooks'
 import { getReprodUrl } from '../helpers'
-import Spinner from './Spinner'
-import MoreText from './MoreText'
+import Spinner from '../components/Spinner'
+import MoreText from '../components/MoreText'
 
 function Search() {
   const location = useLocation()

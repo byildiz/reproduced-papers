@@ -1,14 +1,14 @@
 import { useReducer, useState, Fragment } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLoaderData } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { get, setWith, cloneDeep } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 
-import Button from './Button'
-import TableEditor from './TableEditor'
-import Image from './Image'
-import { useFirebase, useAlgolia, useAuthentication } from '../hooks'
-import { BADGES } from '../constants'
+import Button from '../../components/Button'
+import TableEditor from '../../components/TableEditor'
+import Image from '../../components/Image'
+import { useFirebase, useAlgolia, useAuthentication } from '../../hooks'
+import { BADGES } from '../../constants'
 
 const INITIAL_STATE = {
   title: '',
@@ -70,7 +70,8 @@ const INITIAL_TABLE = {
   values: { 0: { 0: '' } },
 }
 
-function ReprodForm({ paper, paperTables = {}, reprod }) {
+function ReprodForm() {
+  const { paper, reprod, tables: paperTables } = useLoaderData()
   const [state, dispatch] = useReducer(
     reducer,
     reprod ? { ...INITIAL_STATE, ...reprod.data() } : INITIAL_STATE,

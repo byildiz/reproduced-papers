@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
 import { useFirebase, useRequest, useCollection } from '../../hooks'
-import Button from '../Button'
+import Button from '../../components/Button'
 import { LIMIT } from '../../constants'
 
 const ROLES = {
@@ -28,11 +28,11 @@ function getFilteredIds(filter, state) {
 // otherwise useMemo
 const params = { limit: LIMIT }
 
-function Users() {
+function AdminUsers() {
   const firebase = useFirebase()
   const { data, loading, hasMore, fetchMore } = useRequest(
     firebase.getUsers,
-    params,
+    params
   )
   const [state, dispatch] = useCollection(data)
   const { byId } = state
@@ -116,4 +116,4 @@ function Users() {
   )
 }
 
-export default Users
+export default AdminUsers

@@ -18,7 +18,7 @@ import withAuthentication from '../../components/withAuthentication'
 // otherwise useMemo
 const params = { limit: LIMIT }
 
-function Reprods({ authUser }) {
+function UserReprods({ authUser }) {
   const { user } = useRouteLoaderData('user')
   const { reprodId } = useParams()
   const firebase = useFirebase()
@@ -89,7 +89,7 @@ function Reprods({ authUser }) {
                     byId[id].badges.map((key) => (
                       <span
                         key={key}
-                        className={`badge badge-${BADGES[key].color} me-2`}
+                        className={`badge text-bg-${BADGES[key].color} me-2`}
                       >
                         {BADGES[key].label}
                       </span>
@@ -97,7 +97,9 @@ function Reprods({ authUser }) {
                 </td>
                 <td>
                   <span
-                    className={`badge badge-${STATUSES[byId[id].status].color}`}
+                    className={`badge text-bg-${
+                      STATUSES[byId[id].status].color
+                    }`}
                   >
                     {STATUSES[byId[id].status].label}
                   </span>
@@ -153,4 +155,4 @@ function Reprods({ authUser }) {
   )
 }
 
-export default withAuthentication(Reprods)
+export default withAuthentication(UserReprods)

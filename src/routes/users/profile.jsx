@@ -1,6 +1,6 @@
 import { useRouteLoaderData } from 'react-router-dom'
 
-function Profile() {
+function UserProfile() {
   const { user } = useRouteLoaderData('user')
   const data = user.data()
   return (
@@ -13,4 +13,4 @@ function Profile() {
   )
 }
 
-export default Profile
+export default UserProfile

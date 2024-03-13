@@ -18,7 +18,7 @@ import withAuthentication from '../../components/withAuthentication'
 // otherwise useMemo
 const params = { limit: LIMIT }
 
-function Papers({ authUser }) {
+function UserPapers({ authUser }) {
   const { user } = useRouteLoaderData('user')
   const { paperId } = useParams()
   const firebase = useFirebase()
@@ -85,7 +85,7 @@ function Papers({ authUser }) {
                 <td>{byId[id].authors.join(', ')}</td>
                 <td>
                   <span
-                    className={`badge badge-${
+                    className={`badge text-bg-${
                       byId[id].status === 'pending'
                         ? 'secondary'
                         : byId[id].status === 'rejected'
@@ -170,4 +170,4 @@ function Papers({ authUser }) {
   )
 }
 
-export default withAuthentication(Papers)
+export default withAuthentication(UserPapers)
